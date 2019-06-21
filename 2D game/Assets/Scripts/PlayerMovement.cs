@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour{
     Rigidbody2D rb;
     bool isAbleToJump = true;
+    public bool isEnabled = true;
 
     public Animator animator;
     public float jumpSpeed = 100f;
@@ -14,24 +15,25 @@ public class PlayerMovement : MonoBehaviour{
     }
 
     void Update() {
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            if(isAbleToJump) {
-                animator.SetBool("readyForJump", true);
+        if(isEnabled) {
+            if(Input.GetKeyDown(KeyCode.Mouse0)) {
+                if(isAbleToJump) {
+                    animator.SetBool("readyForJump", true);
+                }
             }
-        }
 
-        if(Input.GetKeyUp(KeyCode.Space)) {
-            if(isAbleToJump) {
-                animator.SetBool("isJumping", true);
-                rb.AddForce(new Vector2(0, jumpSpeed));
-                isAbleToJump = false;
+            if(Input.GetKeyUp(KeyCode.Mouse0)) {
+                if(isAbleToJump) {
+                    animator.SetBool("isJumping", true);
+                    rb.AddForce(new Vector2(0, jumpSpeed));
+                    isAbleToJump = false;
+                }
             }
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        Debug.Log(collision.collider.tag);
-        if(collision.collider.tag == "ground") {
+        if(collision.collider.CompareTag("ground")) {
             isAbleToJump = true;
             animator.SetBool("readyForJump", false);
             animator.SetBool("isJumping", false);
