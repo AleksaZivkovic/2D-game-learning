@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformMovement : MonoBehaviour{
-    public float speed = 200f;
-    public List<GameObject> platforms;
+public class PlatformMovement : MonoBehaviour {
+    public float xLimit;
+    public float speed = 5;
+    public bool moving = true;
+    int dir = 0;
+    bool done = true;
 
-    void Start(){
-        platforms = new List<GameObject>();
-        fillPlatforms();
+    void Start() {
+        dir = Random.Range(-1, 1);
     }
 
     void Update(){
-        fillPlatforms();
-    }
+        if(moving) {
+            if(done) {
+                dir *= -1;
+                done = false;
+            }
 
-    void fillPlatforms() {
-        platforms.Clear();
-        Object[] gameObjects = FindObjectsOfType(typeof(GameObject));
+            transform.position = new Vector3(transform.position.x + dir * speed * Time.deltaTime, transform.position.y, transform.position.z);
 
-        foreach(GameObject obj in gameObjects) {
-            if(obj.CompareTag("ground")) {
-                platforms.Add(obj);
+            if(Mathf.Abs(transform.position.x) > xLimit) {
+                done = true;
             }
         }
     }
