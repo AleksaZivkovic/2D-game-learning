@@ -12,10 +12,10 @@ public class PlatformManager : MonoBehaviour {
     List<GameObject> platforms;
     GameObject highestPlatform;
     GameObject secondHighestPlatform;
+    GameObject lowestPlatform;
     ScoreManager scoreManager;
     PlayerMovement player;
     bool dead = false;
-    bool doneChecking = true;
 
     void Start() {
         platforms = new List<GameObject>();
@@ -31,32 +31,24 @@ public class PlatformManager : MonoBehaviour {
             if(collisionInfo.collided) {
                 generatePlatform();
                 collisionInfo.reset();
-            } else if(player.transform.position.y > highestPlatform.transform.position.y) {
+
+                /*if(doneChecking) {
+                    StartCoroutine(checkUnder());
+                }*/
+            } else if(player.transform.position.y > highestPlatform.transform.position.y + yOffset) {
                 dead = true;
                 Debug.Log("Not collided");
             }
         }
 
-        if(doneChecking) {
-            StartCoroutine(checkUnder());
+        if(player.transform.position.y < lowestPlatform.transform.position.y) {
+            dead = true;
+            Debug.Log("Under lowest");
         }
 
         if(dead) {
             player.die();
         }
-    }
-
-    IEnumerator checkUnder() {
-        doneChecking = false;
-        Debug.Log("Check 1");
-        yield return new WaitForSeconds(sec);
-
-        Debug.Log("Check 2");
-        if(player.transform.position.y < secondHighestPlatform.transform.position.y) {
-            dead = true;
-            Debug.Log("Under second highest");
-        }
-        doneChecking = true;
     }
 
     void generatePlatform() {
@@ -69,11 +61,17 @@ public class PlatformManager : MonoBehaviour {
         fillPlatforms();
         GameObject[] platformArray = platforms.ToArray();
         float highest = float.MinValue;
+        float lowest = float.MaxValue;
 
         foreach(GameObject platform in platformArray) {
             if(highest < platform.transform.position.y) {
                 highest = platform.transform.position.y;
                 highestPlatform = platform;
+            }
+
+            if(lowest > platform.transform.position.y) {
+                lowest = platform.transform.position.y;
+                lowestPlatform = platform;
             }
         }
 
@@ -85,6 +83,9 @@ public class PlatformManager : MonoBehaviour {
                 secondHighestPlatform = platform;
             }
         }
+
+        Debug.DrawLine(lowestPlatform.transform.position, secondHighestPlatform.transform.position, Color.red);
+        Debug.DrawLine(secondHighestPlatform.transform.position, highestPlatform.transform.position, Color.green);
 
         secondHighestPlatform.GetComponent<PlatformMovement>().moving = false;
         highestPlatform.GetComponent<PlatformMovement>().moving = true;

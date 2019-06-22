@@ -14,6 +14,7 @@ public class UIControler : MonoBehaviour {
     public TextMeshProUGUI best;
     public TextMeshProUGUI deadScore;
     public TextMeshProUGUI deadBestScore;
+    public TextMeshProUGUI diamonds;
 
 
     GameObject player;
@@ -85,5 +86,9 @@ public class UIControler : MonoBehaviour {
 
     public void restart() {
         SceneManager.LoadScene(0);
+    }
+
+    public void setDiamonds(int ammount) {
+        diamonds.text = ammount.ToString();
     }
 }
