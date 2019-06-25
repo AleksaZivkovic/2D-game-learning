@@ -12,6 +12,11 @@ public class CollisionInfo : MonoBehaviour {
             GetComponent<BoxCollider2D>().enabled = false;
             collided = true;
             StartCoroutine(turnOn());
+        } else if(collision.CompareTag("Player")) {
+            GetComponent<BoxCollider2D>().enabled = false;
+            collided = true;
+            GetComponent<BoxCollider2D>().isTrigger = false;
+            GetComponent<BoxCollider2D>().enabled = true;
         }
     }
 
