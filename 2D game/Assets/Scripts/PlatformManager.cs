@@ -25,7 +25,6 @@ public class PlatformManager : MonoBehaviour {
         scoreManager = FindObjectOfType<ScoreManager>();
 
         getHighest();
-        highestPlatform.GetComponent<PlatformMovement>().setMovementBounds(xLimit1, xLimit2);
     }
 
     void Update() {
@@ -92,8 +91,9 @@ public class PlatformManager : MonoBehaviour {
         Debug.DrawLine(lowestPlatform.transform.position, secondHighestPlatform.transform.position, Color.red);
         Debug.DrawLine(secondHighestPlatform.transform.position, highestPlatform.transform.position, Color.green);
 
-        secondHighestPlatform.GetComponent<PlatformMovement>().setPlatformBounds();
+
         secondHighestPlatform.GetComponent<PlatformMovement>().moving = false;
+        secondHighestPlatform.GetComponent<PlatformMovement>().first = false;
 
         highestPlatform.GetComponent<PlatformMovement>().moving = true;
         StartCoroutine(removePlatforms());

@@ -16,13 +16,17 @@ public class PlayerMovement : MonoBehaviour{
     public float jumpSpeed = 100f;
     public float speed = 2.5f;
     public float offset = 0.5f;
-    public Transform left;
-    public Transform right;
+    public float left;
+    public float right;
 
     void Start() {
         do {
             dir = Random.Range(-1, 1);
         } while(dir == 0);
+
+        if(dir == -1) {
+            transform.Rotate(0, 180, 0);
+        }
 
         rb = GetComponent<Rigidbody2D>();
         scoreManager = FindObjectOfType<ScoreManager>();
@@ -36,6 +40,7 @@ public class PlayerMovement : MonoBehaviour{
                 if(Input.GetKeyDown(KeyCode.Mouse0)) {
                     moving = false;
                     animator.SetBool("readyForJump", true);
+                    animator.SetBool("isRunning", false);
                 }
 
                 if(Input.GetKeyUp(KeyCode.Mouse0)) {
@@ -47,13 +52,15 @@ public class PlayerMovement : MonoBehaviour{
                 }
 
                 if(moving) {
-                    transform.position = new Vector3(transform.position.x + dir * speed * Time.deltaTime, transform.position.y, transform.position.z);
-
-                    if(transform.position.x > right.position.x - offset) {
+                    if(transform.position.x > right - offset) {
                         dir = -1;
-                    } else if(transform.position.x < left.position.x + offset) {
+                        transform.Rotate(0, 180, 0);
+                    } else if(transform.position.x < left + offset) {
                         dir = 1;
+                        transform.Rotate(0, 180, 0);
                     }
+
+                    transform.position = new Vector3(transform.position.x + dir * speed * Time.deltaTime, transform.position.y, transform.position.z);
                 }
             }
 
@@ -70,6 +77,8 @@ public class PlayerMovement : MonoBehaviour{
             moving = true;
             animator.SetBool("readyForJump", false);
             animator.SetBool("isJumping", false);
+            animator.SetBool("isRunning", true);
+            ;
         }
     }
 

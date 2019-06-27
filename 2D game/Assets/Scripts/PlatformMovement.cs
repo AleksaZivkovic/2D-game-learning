@@ -5,11 +5,13 @@ using UnityEngine;
 public class PlatformMovement : MonoBehaviour {
     public float xLimit1;
     public float xLimit2;
+    public float xLimit = 1.6f;
     public float speed = 5;
     [Range(0.001f, 1f)]
     public float powerUpChance = 0.02f;
     public bool moving = true;
     public bool hasPowerUp;
+    public bool first = true;
 
     public Transform powerUpPlaceholder;
     public Transform left;
@@ -36,7 +38,7 @@ public class PlatformMovement : MonoBehaviour {
             powerUpObj = Instantiate(powerUp, powerUpPlaceholder.position, powerUpPlaceholder.rotation);
         }
 
-        setPlatformBounds();
+        setMovementBounds(player.transform.position.x + xLimit, player.transform.position.x - xLimit);
     }
 
     void Update(){
@@ -60,15 +62,18 @@ public class PlatformMovement : MonoBehaviour {
             }
         }
 
+        if(!first) {
+            setPlatformBounds();
+        }
+    }
+
+    public void setPlatformBounds() {
+        player.right = right.position.x;
+        player.left = left.position.x;
     }
 
     public void setMovementBounds(float a, float b) {
         xLimit1 = a;
         xLimit2 = b;
-    }
-
-    public void setPlatformBounds() {
-        player.right = right;
-        player.left = left;
     }
 }
