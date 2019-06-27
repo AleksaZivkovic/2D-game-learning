@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformMovement : MonoBehaviour {
-    public float xLimit;
+    public float xLimit1;
+    public float xLimit2;
     public float speed = 5;
     [Range(0.001f, 1f)]
     public float powerUpChance = 0.02f;
@@ -11,15 +12,19 @@ public class PlatformMovement : MonoBehaviour {
     public bool hasPowerUp;
 
     public Transform powerUpPlaceholder;
+    public Transform left;
+    public Transform right;
     public GameObject powerUp;
 
     bool added = false;
     int dir = 0;
     GameObject powerUpObj;
     CoinManager coinManager;
+    PlayerMovement player;
 
     void Start() {
         coinManager = FindObjectOfType<CoinManager>();
+        player = FindObjectOfType<PlayerMovement>();
 
         do {
             dir = Random.Range(-1, 1);
@@ -30,15 +35,17 @@ public class PlatformMovement : MonoBehaviour {
         if(hasPowerUp) {
             powerUpObj = Instantiate(powerUp, powerUpPlaceholder.position, powerUpPlaceholder.rotation);
         }
+
+        setPlatformBounds();
     }
 
     void Update(){
         if(moving) {
             transform.position = new Vector3(transform.position.x + dir * speed * Time.deltaTime, transform.position.y, transform.position.z);
 
-            if(transform.position.x > xLimit) {
+            if(transform.position.x > xLimit1) {
                 dir = -1;
-            } else if(transform.position.x < -xLimit) {
+            } else if(transform.position.x < xLimit2) {
                 dir = 1;
             }
 
@@ -53,5 +60,15 @@ public class PlatformMovement : MonoBehaviour {
             }
         }
 
+    }
+
+    public void setMovementBounds(float a, float b) {
+        xLimit1 = a;
+        xLimit2 = b;
+    }
+
+    public void setPlatformBounds() {
+        player.right = right;
+        player.left = left;
     }
 }

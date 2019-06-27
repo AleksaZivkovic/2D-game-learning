@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlatformManager : MonoBehaviour {
     public GameObject platform;
     public float yOffset = 2f;
-    public float xLimit = 3f;
+    public float xLimit = 1.6f;
+    public float xLimit1 = 1.6f;
+    public float xLimit2 = -1.6f;
     public Vector2 offset = Vector2.zero;
     public float sec = 0.5f;
 
@@ -21,29 +23,29 @@ public class PlatformManager : MonoBehaviour {
         platforms = new List<GameObject>();
         player = FindObjectOfType<PlayerMovement>();
         scoreManager = FindObjectOfType<ScoreManager>();
-        fillPlatforms();
+
+        getHighest();
+        highestPlatform.GetComponent<PlatformMovement>().setMovementBounds(xLimit1, xLimit2);
     }
 
     void Update() {
         getHighest();
+
+        xLimit1 = player.transform.position.x + xLimit;
+        xLimit2 = player.transform.position.x - xLimit;
+
         if(player.jumped) {
             CollisionInfo collisionInfo = highestPlatform.GetComponent<CollisionInfo>();
             if(collisionInfo.collided) {
                 generatePlatform();
                 collisionInfo.reset();
-
-                /*if(doneChecking) {
-                    StartCoroutine(checkUnder());
-                }*/
             } else if(player.transform.position.y > highestPlatform.transform.position.y + yOffset) {
                 dead = true;
-                Debug.Log("Not collided");
             }
         }
 
         if(player.transform.position.y < lowestPlatform.transform.position.y) {
             dead = true;
-            Debug.Log("Under lowest");
         }
 
         if(dead) {
@@ -52,9 +54,12 @@ public class PlatformManager : MonoBehaviour {
     }
 
     void generatePlatform() {
-        Vector2 position = new Vector2(Random.Range(-xLimit, xLimit), highestPlatform.transform.position.y + yOffset);
+        Vector2 position = new Vector2(Random.Range(xLimit2, xLimit1), highestPlatform.transform.position.y + yOffset);
         Instantiate(platform, position, Quaternion.identity);
         scoreManager.addPoint();
+
+        getHighest();
+        highestPlatform.GetComponent<PlatformMovement>().setMovementBounds(xLimit1, xLimit2);
     }
 
     void getHighest() {
@@ -87,7 +92,9 @@ public class PlatformManager : MonoBehaviour {
         Debug.DrawLine(lowestPlatform.transform.position, secondHighestPlatform.transform.position, Color.red);
         Debug.DrawLine(secondHighestPlatform.transform.position, highestPlatform.transform.position, Color.green);
 
+        secondHighestPlatform.GetComponent<PlatformMovement>().setPlatformBounds();
         secondHighestPlatform.GetComponent<PlatformMovement>().moving = false;
+
         highestPlatform.GetComponent<PlatformMovement>().moving = true;
         StartCoroutine(removePlatforms());
     }
