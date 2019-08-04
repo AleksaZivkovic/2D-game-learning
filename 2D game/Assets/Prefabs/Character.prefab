@@ -167,5 +167,7 @@ MonoBehaviour:
   jumpSpeed: 350
   speed: 1.5
   offset: 0.125
-  left: {fileID: 0}
-  right: {fileID: 0}
+  left: 0
+  right: 0
+  leftRotation: {fileID: 0}
+  rightRotation: {fileID: 0}
